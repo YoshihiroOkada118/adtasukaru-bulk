@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>プログラム情報 一括登録・編集 UI（モック / RevoGrid版）｜アドタスカル</title>
+<style>
+  :root{
+    --blue:#2b6cb0; --blue-d:#234e84; --bg:#f4f6f9; --line:#d8dee6;
+    --green:#2f855a; --green-bg:#e6f4ec; --orange:#b7791f; --orange-bg:#fdf3e0;
+    --red:#c53030; --red-bg:#fdecec; --gray:#718096; --gray-bg:#edf0f4; --yellow-bg:#fff8e1;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:#1a202c; font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif; font-size:14px; line-height:1.6; }
+  header.app{ background:linear-gradient(180deg,#fff,#fbfcfe); border-bottom:1px solid var(--line); padding:14px 22px; }
+  header.app h1{ font-size:18px; margin:0 0 2px; }
+  header.app .sub{ color:var(--gray); font-size:12.5px; }
+  .tag{ font-size:12px; color:#2b6cb0; border:1px solid #b8d4ef; border-radius:4px; padding:1px 7px; vertical-align:middle; }
+  .wrap{ padding:18px 22px 60px; }
+
+  .scenario{ background:#fff; border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; }
+  .scenario b{ color:var(--blue-d); }
+  .scenario ul{ margin:6px 0 0; padding-left:20px; } .scenario li{ margin:1px 0; }
+  kbd{ background:#2d3748; color:#fff; border-radius:4px; padding:1px 6px; font-size:11px; font-family:inherit; }
+
+  .context-bar{ display:flex; gap:18px; flex-wrap:wrap; align-items:center; background:#fff; border:1px solid var(--line); border-radius:8px; padding:10px 16px; margin-bottom:14px; }
+  .context-bar .field{ display:flex; align-items:center; gap:7px; }
+  .context-bar label{ font-size:12px; color:var(--gray); }
+  .context-bar select{ border:1px solid var(--line); border-radius:6px; padding:5px 8px; font-size:13px; background:#fff; }
+  .context-bar .pill{ margin-left:auto; font-size:12px; color:var(--gray); } .context-bar .pill b{ color:#1a202c; }
+
+  .toolbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+  button{ font-family:inherit; font-size:13px; cursor:pointer; border:1px solid var(--line); background:#fff; color:#2d3748; border-radius:6px; padding:7px 12px; transition:.12s; }
+  button:hover{ background:#f0f3f7; }
+  button.primary{ background:var(--blue); border-color:var(--blue); color:#fff; font-weight:bold; } button.primary:hover{ background:var(--blue-d); }
+  button.danger{ color:var(--red); border-color:#f0c4c4; } button.danger:hover{ background:var(--red-bg); }
+  .toolbar .spacer{ flex:1; }
+  .bulk-inline{ display:flex; gap:6px; align-items:center; background:#fff; border:1px dashed var(--blue); border-radius:6px; padding:5px 10px; }
+  .bulk-inline label{ font-size:12px; color:var(--blue-d); font-weight:bold; }
+  .bulk-inline select,.bulk-inline input{ border:1px solid var(--line); border-radius:5px; padding:5px 7px; font-size:13px; } .bulk-inline input{ width:120px; }
+
+  #grid{ display:block; height:470px; background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  #loading{ padding:40px; text-align:center; color:var(--gray); }
+
+  .footer-bar{ display:flex; gap:18px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--gray); }
+  .legend .item{ display:flex; align-items:center; gap:5px; }
+  .swatch{ width:13px; height:13px; border-radius:3px; border:1px solid rgba(0,0,0,.12); display:inline-block; }
+  .footer-bar .counts{ margin-left:auto; font-size:13px; } .footer-bar .counts span{ margin-left:12px; } .footer-bar .counts b{ font-size:15px; }
+
+  #errorPanel{ margin-top:12px; background:#fff; border:1px solid var(--line); border-left:4px solid var(--red); border-radius:8px; display:none; overflow:hidden; }
+  #errorPanel.show{ display:block; }
+  #errorPanel .head{ background:var(--red-bg); color:var(--red); font-weight:bold; padding:8px 14px; font-size:13px; }
+  #errorPanel ul{ margin:0; padding:6px 0; max-height:190px; overflow:auto; list-style:none; }
+  #errorPanel li{ padding:5px 14px; font-size:12.5px; cursor:pointer; border-bottom:1px solid #f2f2f2; } #errorPanel li:hover{ background:#fafbfd; }
+  #errorPanel li .loc{ color:var(--blue); font-weight:bold; margin-right:8px; }
+
+  #toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:#1a202c; color:#fff; padding:11px 22px; border-radius:8px; font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,.25); }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); } #toast.ok{ background:var(--green); } #toast.ng{ background:var(--red); }
+
+  .mock-note{ font-size:11.5px; color:var(--gray); margin-top:18px; border-top:1px dashed var(--line); padding-top:10px; } .mock-note code{ background:#eef1f5; padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<header class="app">
+  <h1>プログラム情報 一括登録・編集 UI <span class="tag">モック / RevoGrid版（MIT・無料）</span></h1>
+  <div class="sub">RevoGrid（MITライセンス）を使った版。範囲選択・オートフィル・コピー&ペーストはライブラリ標準機能</div>
+</header>
+
+<div class="wrap">
+
+  <div class="scenario">
+    <b>📋 このモックで再現しているシーン</b>　ある案件に紐づく多数のオフラインCVを、まとめて編集する例です。<br>
+    <b>承認率が 70% → 65% に変わった</b>ようなときに、まとめて直せます。
+    <ul>
+      <li><b>コピー＆ペースト</b>：セル/範囲を選んで <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd>（RevoGrid標準）</li>
+      <li><b>オートフィル</b>：選択範囲の右下角をドラッグ（RevoGrid標準）</li>
+      <li><b>一括設定</b>：ツールバーから列を選んで全行へ流し込み</li>
+      <li><b>その場でエラー</b>：編集した瞬間に違反セルが赤くなり、下にエラー一覧（重複もリアルタイム検知）</li>
+      <li><b>反映ボタン</b>：エラーが無ければ確定（保存をシミュレート）</li>
+    </ul>
+  </div>
+
+  <div class="context-bar">
+    <div class="field"><label>広告媒体（ツール）</label>
+      <select><option selected>Google広告 成果連携（オフラインCV）</option></select></div>
+    <div class="field"><label>アカウント</label>
+      <select><option selected>メインアカウント（123-456-7890）</option></select></div>
+    <div class="pill">対象：<b>Google CV</b> / プログラム件数 <b id="rowCountPill">0</b> 件</div>
+  </div>
+
+  <div class="toolbar">
+    <button id="addRowBtn">＋ 行を追加（新規）</button>
+    <button id="dupRowBtn">⧉ フォーカス行を複製</button>
+    <button class="danger" id="delRowBtn">🗑 フォーカス行を削除</button>
+    <div class="bulk-inline" style="margin-left:6px;">
+      <label>一括設定：</label>
+      <select id="bulkColumn">
+        <option value="approvalRate">承認率</option>
+        <option value="reward">報酬額</option>
+        <option value="aspName">ASP</option>
+        <option value="cvName">オフラインCV名</option>
+        <option value="aspPromotionId">プログラムID</option>
+      </select>
+      <input id="bulkValue" placeholder="値（例: 65）" />
+      <button id="bulkApplyBtn">全行に一括設定</button>
+    </div>
+    <div class="spacer"></div>
+    <button id="resetBtn">初期状態に戻す</button>
+    <button class="primary" id="applyBtn">✓ 反映する</button>
+  </div>
+
+  <revo-grid id="grid"></revo-grid>
+  <div id="loading">RevoGrid を読み込み中…（初回のみネット接続が必要です）</div>
+
+  <div id="errorPanel"><div class="head" id="errorHead"></div><ul id="errorList"></ul></div>
+
+  <div class="footer-bar">
+    <div class="legend">
+      <div class="item"><span class="swatch" style="background:#e6f4ec;"></span>新規</div>
+      <div class="item"><span class="swatch" style="background:#fff8e1;"></span>変更したセル</div>
+      <div class="item"><span class="swatch" style="background:#fdecec;"></span>エラー</div>
+      <div class="item"><span class="swatch" style="background:#f3f5f8;"></span>対象外（ASPにより自動 / 不要）</div>
+    </div>
+    <div class="counts">
+      <span>既存 <b id="cntKizon">0</b></span>
+      <span style="color:var(--green)">新規 <b id="cntShinki">0</b></span>
+      <span style="color:var(--orange)">編集済 <b id="cntHenshu">0</b></span>
+      <span style="color:var(--red)">エラー <b id="cntError">0</b></span>
+    </div>
+  </div>
+
+  <div class="mock-note">
+    ※ RevoGrid（MIT・無料）を CDN から読み込んでいます（初回のみネット接続が必要）。範囲選択・オートフィル・コピペはライブラリ標準。<br>
+    ※ ASP列はドロップダウン化のため読み取り専用セル＋セレクト表示にしています（その列への貼り付けは不可。値変更はセレクトから）。<br>
+    ※ ASP・項目・バリデーションは実装（<code>PromotionEditor.vue</code> / <code>RegisterRequest.php</code>）を参考にした簡略版。TikTok/LINE/YDA の複数選択セルは本モックでは対象外。
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+/* ============================================================
+   RevoGrid 読み込み
+   ============================================================ */
+let defineRevoGrid;
+try{
+  ({ defineCustomElement: defineRevoGrid } =
+    await import('https://cdn.jsdelivr.net/npm/@revolist/revogrid@4.14.7/standalone/revo-grid.js/+esm'));
+  defineRevoGrid();
+  document.getElementById('loading').style.display='none';
+}catch(err){
+  document.getElementById('loading').innerHTML =
+    '⚠ RevoGrid の読み込みに失敗しました（ネット接続をご確認ください）。<br>'+String(err);
+  throw err;
+}
+
+/* ============================================================
+   マスタ・初期データ（バニラ版と共通ロジック）
+   ============================================================ */
+const ASP_MASTER = [
+  { name:'A8.net',          usesAspPromotionName:true,  pointBackReward:false },
+  { name:'afb',             usesAspPromotionName:true,  pointBackReward:false },
+  { name:'レントラックス',   usesAspPromotionName:true,  pointBackReward:false },
+  { name:'アクセストレード', usesAspPromotionName:false, pointBackReward:false },
+  { name:'JANet',           usesAspPromotionName:true,  pointBackReward:false },
+  { name:'Felmat',          usesAspPromotionName:false, pointBackReward:true  },
+];
+const ASP_NAMES = ASP_MASTER.map(a=>a.name);
+const aspByName = n => ASP_MASTER.find(a=>a.name===n) || null;
+
+const FIELDS = ['aspName','promotionName','aspPromotionName','aspPromotionId','cvName','reward','approvalRate'];
+const COL_LABEL = { aspName:'ASP', promotionName:'プログラム名', aspPromotionName:'ASPプログラム名', aspPromotionId:'プログラムID', cvName:'オフラインCV名', reward:'報酬額', approvalRate:'承認率' };
+
+function buildInitialData(){
+  const rows=[]; let seq=1;
+  const group=(campaign,asp,count,reward,rate)=>{
+    const a=aspByName(asp);
+    for(let i=1;i<=count;i++){
+      rows.push({ _id:'p'+String(seq).padStart(3,'0'), aspName:asp,
+        promotionName:`${campaign}_CV${String(i).padStart(2,'0')}`,
+        aspPromotionName:a.usesAspPromotionName?`${campaign}案件${String(i).padStart(2,'0')}`:'',
+        aspPromotionId:`PID${String(seq).padStart(4,'0')}`,
+        cvName:`gcv_${campaign}_${String(i).padStart(2,'0')}`,
+        reward:a.pointBackReward?'':reward, approvalRate:rate });
+      seq++;
+    }
+  };
+  group('美容クリニックX','A8.net',12,22000,70);
+  group('脱毛サロンY','afb',9,15000,80);
+  group('FX口座Z','Felmat',7,'',55);
+  return rows;
+}
+
+/* ============================================================
+   状態・ヘルパ
+   ============================================================ */
+let data=[], ORIGINAL={}, cellErrors=[], newRowSeq=0, focusedRow=null, guard=false;
+const grid=document.getElementById('grid');
+
+function snapshotOriginal(rows){ ORIGINAL={}; rows.forEach(r=>{ if(r._id){ ORIGINAL[r._id]={}; FIELDS.forEach(k=>ORIGINAL[r._id][k]=String(r[k])); } }); }
+function blankRow(){ return {_id:null,aspName:'',promotionName:'',aspPromotionName:'',aspPromotionId:'',cvName:'',reward:'',approvalRate:''}; }
+function isBlankRow(r){ return !r.aspName&&!r.promotionName&&!r.aspPromotionName&&!r.cvName&&(r.reward===''||r.reward==null); }
+function cellNA(r,prop){ const a=aspByName(data[r]&&data[r].aspName); if(prop==='aspPromotionName')return !(a&&a.usesAspPromotionName); if(prop==='reward')return !!(a&&a.pointBackReward); return false; }
+function naLabel(prop){ return prop==='aspPromotionName'?'対象外':prop==='reward'?'ASP自動':''; }
+function isInt(v){ return /^-?\d+$/.test(String(v).trim()); }
+function valStr(v){ return v==null?'':String(v); }
+function rowChanged(r){ if(!r._id||!ORIGINAL[r._id])return false; const o=ORIGINAL[r._id]; return FIELDS.some(k=>String(r[k])!==o[k]); }
+function cellChanged(ri,prop){ const r=data[ri]; if(!r||!r._id||!ORIGINAL[r._id])return false; return ORIGINAL[r._id][prop]!==undefined && String(r[prop])!==ORIGINAL[r._id][prop]; }
+function computeStatus(ri){ const r=data[ri]; if(!r)return''; if(cellErrors[ri]&&Object.keys(cellErrors[ri]).length)return'エラー'; if(!r._id)return isBlankRow(r)?'':'新規'; return rowChanged(r)?'編集済':'既存'; }
+
+/* ============================================================
+   バリデーション（バニラ版と同一ルール）
+   ============================================================ */
+function validateAll(){
+  cellErrors=data.map(()=>({}));
+  // プログラム名＝アカウント単位／ASPプログラム名・プログラムID＝アカウント＋ASP単位（当グリッド＝1アカウント）
+  const nameCount={}, aspPnameCount={}, pidCount={};
+  data.forEach(r=>{ if(isBlankRow(r))return;
+    const pn=(r.promotionName||'').trim(); if(pn)nameCount[pn]=(nameCount[pn]||0)+1;
+    const a=aspByName(r.aspName);
+    if(a){
+      const apn=(r.aspPromotionName||'').trim(); if(apn){ const k=r.aspName+'||'+apn; aspPnameCount[k]=(aspPnameCount[k]||0)+1; }
+      const pid=(r.aspPromotionId||'').trim();  if(pid){ const k=r.aspName+'||'+pid; pidCount[k]=(pidCount[k]||0)+1; }
+    }
+  });
+  data.forEach((r,i)=>{ if(isBlankRow(r))return; const e=cellErrors[i], a=aspByName(r.aspName);
+    if(!r.aspName)e.aspName='ASPを選択してください'; else if(!a)e.aspName='不明なASPです';
+    const pn=(r.promotionName||'').trim();
+    if(!pn)e.promotionName='プログラム名は必須です'; else if(pn.length>100)e.promotionName='100文字以内で入力してください'; else if(nameCount[pn]>1)e.promotionName='プログラム名がアカウント内で重複しています';
+    if(a&&a.usesAspPromotionName){ const apn=(r.aspPromotionName||'').trim();
+      if(!apn)e.aspPromotionName='このASPではASPプログラム名が必須です';
+      else if(aspPnameCount[r.aspName+'||'+apn]>1)e.aspPromotionName='ASPプログラム名が同一ASP内で重複しています'; }
+    const pid=(r.aspPromotionId||'').trim();
+    if(pid && a && pidCount[r.aspName+'||'+pid]>1)e.aspPromotionId='プログラムIDが同一ASP内で重複しています';
+    const cv=r.cvName||'';
+    if(!cv.trim())e.cvName='オフラインCV名は必須です'; else if(cv.includes(','))e.cvName='カンマ(,)は使用できません'; else if(/[\s　]/.test(cv))e.cvName='Google CV名にスペースは使用できません';
+    if(!(a&&a.pointBackReward)){ const rw=String(r.reward).trim();
+      if(rw===''||r.reward==null)e.reward='報酬額は必須です'; else if(!isInt(rw))e.reward='整数で入力してください'; else if(parseInt(rw,10)<0)e.reward='0以上で入力してください'; }
+    const ar=String(r.approvalRate).trim();
+    if(ar===''||r.approvalRate==null)e.approvalRate='承認率は必須です'; else if(!isInt(ar))e.approvalRate='整数で入力してください'; else { const n=parseInt(ar,10); if(n<1||n>1000)e.approvalRate='1〜1000の範囲で入力してください'; }
+  });
+}
+
+/* ============================================================
+   RevoGrid の列定義（装飾はShadow DOM内のためインラインstyleで）
+   ============================================================ */
+const BADGE_STYLE={
+  '新規':{background:'#e6f4ec',color:'#2f855a'}, '編集済':{background:'#fdf3e0',color:'#b7791f'},
+  '既存':{background:'#edf0f4',color:'#718096'}, 'エラー':{background:'#fdecec',color:'#c53030'},
+};
+function statusTpl(h,p){
+  const st=computeStatus(p.rowIndex); if(!st)return h('span',{});
+  const s=BADGE_STYLE[st];
+  return h('span',{style:{display:'inline-block',padding:'1px 8px',borderRadius:'11px',fontSize:'11px',fontWeight:'bold',background:s.background,color:s.color}}, st);
+}
+function aspTpl(h,p){
+  const cur=p.model.aspName||'';
+  const opts=[h('option',{value:'',selected:cur===''},'選択…')]
+    .concat(ASP_NAMES.map(n=>h('option',{value:n, selected:n===cur}, n)));
+  return h('select',{
+    key:'asp-'+p.rowIndex+'-'+cur,
+    style:{width:'100%',height:'100%',border:'0',background:'transparent',font:'inherit',fontSize:'13px',cursor:'pointer'},
+    onChange:(e)=>setCell(p.rowIndex,'aspName',e.target.value),
+  }, opts);
+}
+function naTpl(prop){
+  return (h,p)=> cellNA(p.rowIndex,prop)
+    ? h('span',{style:{color:'#a7b0bd',fontStyle:'italic'}}, naLabel(prop))
+    : h('span',{}, valStr(p.model[prop]));
+}
+function errStyle(p){
+  const err=cellErrors[p.rowIndex]&&cellErrors[p.rowIndex][p.prop];
+  if(err)return{ class:{}, style:{ background:'#fdecec', boxShadow:'inset 0 0 0 1px #f3b4b4' } };
+  if(cellChanged(p.rowIndex,p.prop))return{ class:{}, style:{ background:'#fff8e1' } };
+  return { class:{}, style:{} };
+}
+function buildColumns(){
+  return [
+    { name:'状態', prop:'_status', size:84, readonly:true, cellTemplate:statusTpl },
+    { name:'ASP', prop:'aspName', size:150, readonly:true, cellTemplate:aspTpl, cellProperties:errStyle },
+    { name:'プログラム名', prop:'promotionName', size:200, cellProperties:errStyle },
+    { name:'ASPプログラム名', prop:'aspPromotionName', size:190, readonly:(p)=>cellNA(p.rowIndex,'aspPromotionName'), cellTemplate:naTpl('aspPromotionName'), cellProperties:errStyle },
+    { name:'プログラムID', prop:'aspPromotionId', size:130, cellProperties:errStyle },
+    { name:'オフラインCV名', prop:'cvName', size:175, cellProperties:errStyle },
+    { name:'報酬額', prop:'reward', size:110, readonly:(p)=>cellNA(p.rowIndex,'reward'), cellTemplate:naTpl('reward'), cellProperties:errStyle },
+    { name:'承認率', prop:'approvalRate', size:90, cellProperties:errStyle },
+  ];
+}
+
+/* ============================================================
+   反映・再描画
+   ============================================================ */
+function ensureTrailingBlanks(){
+  let blanks=0; for(let i=data.length-1;i>=0&&isBlankRow(data[i]);i--)blanks++;
+  while(blanks<2){ data.push(blankRow()); blanks++; }
+}
+function refresh(structural){
+  ensureTrailingBlanks();
+  validateAll();
+  if(structural){ guard=true; grid.source=data.slice(); setTimeout(()=>{guard=false;},0); }
+  grid.columns=buildColumns();
+  updateFooter();
+}
+function setCell(r,prop,val){ data[r][prop]=val; refresh(true); }
+
+function updateFooter(){
+  let kizon=0,shinki=0,henshu=0,errCnt=0,errCells=0;
+  data.forEach((r,i)=>{ if(isBlankRow(r))return; const st=computeStatus(i);
+    if(st==='既存')kizon++; else if(st==='新規')shinki++; else if(st==='編集済')henshu++; else if(st==='エラー'){ errCnt++; errCells+=Object.keys(cellErrors[i]).length; } });
+  rowCountPill.textContent=kizon+shinki+henshu+errCnt;
+  cntKizon.textContent=kizon; cntShinki.textContent=shinki; cntHenshu.textContent=henshu; cntError.textContent=errCnt;
+  const panel=errorPanel, list=errorList;
+  list.innerHTML='';
+  if(errCells>0){ panel.classList.add('show'); errorHead.textContent=`⚠ 入力エラー ${errCells} 件（${errCnt} 行）`;
+    data.forEach((r,i)=>{ const e=cellErrors[i]; if(!e)return; Object.keys(e).forEach(prop=>{
+      const li=document.createElement('li'); li.innerHTML=`<span class="loc">${i+1}行目「${COL_LABEL[prop]||prop}」</span>${e[prop]}`;
+      li.onclick=()=>{ try{ grid.scrollToRow?.(i); }catch(_){} }; list.appendChild(li);
+    }); });
+  } else panel.classList.remove('show');
+}
+
+/* ============================================================
+   グリッド初期化・イベント
+   ============================================================ */
+grid.range=true; grid.resize=true; grid.rowHeaders=true; grid.useClipboard=true; grid.autoSizeOnTextOverlap=false;
+
+// 編集・オートフィル・貼り付け後 → 値を取り込み、再検証して装飾更新
+grid.addEventListener('afteredit', (e)=>{
+  if(guard)return;
+  const d=e.detail||{};
+  // 単一セル編集： {prop, rowIndex, val}
+  if(d.prop!==undefined && d.rowIndex!=null && data[d.rowIndex]){
+    data[d.rowIndex][d.prop] = (d.val!==undefined?d.val:d.value);
+  }
+  // 範囲編集（貼り付け/オートフィル）： {data:{rowIndex:{prop:val}}} 形式に対応
+  if(d.data && typeof d.data==='object'){
+    Object.keys(d.data).forEach(ri=>{ if(!data[ri])return; const row=d.data[ri]; Object.keys(row).forEach(p=>{ data[ri][p]=row[p]; }); });
+  }
+  // 念のため grid.source も突き合わせ（実装差異の保険）
+  setTimeout(()=>{ if(Array.isArray(grid.source)&&grid.source.length===data.length) data=grid.source; validateAll(); grid.columns=buildColumns(); updateFooter(); },0);
+});
+// フォーカス行を記録（複製・削除用）
+grid.addEventListener('afterfocus', e=>{ const d=e.detail||{}; const y=(d.rowIndex!=null)?d.rowIndex:(d.cell&&d.cell.y); if(y!=null)focusedRow=y; });
+
+/* ============================================================
+   ツールバー
+   ============================================================ */
+function toast(msg,type){ const t=document.getElementById('toast'); t.textContent=msg; t.className='show '+(type||''); setTimeout(()=>t.className=type||'',2400); }
+
+function addRow(){ data.splice(Math.max(0,data.length-2),0,blankRow()); refresh(true); }
+function dupRows(){
+  if(focusedRow==null||!data[focusedRow]||isBlankRow(data[focusedRow])){ toast('複製する行にカーソルを置いてください','ng'); return; }
+  const s=data[focusedRow];
+  data.splice(data.length-2,0,{_id:null,aspName:s.aspName,promotionName:s.promotionName+'_copy',aspPromotionName:s.aspPromotionName?s.aspPromotionName+'_copy':'',aspPromotionId:s.aspPromotionId?s.aspPromotionId+'_copy':'',cvName:s.cvName+'_copy',reward:s.reward,approvalRate:s.approvalRate});
+  refresh(true); toast('フォーカス行を複製しました（新規）','ok');
+}
+function delRows(){
+  if(focusedRow==null||!data[focusedRow]){ toast('削除する行にカーソルを置いてください','ng'); return; }
+  data.splice(focusedRow,1); focusedRow=null; refresh(true);
+}
+function bulkApply(){
+  const prop=bulkColumn.value, val=bulkValue.value;
+  const rows=data.map((r,i)=>i).filter(i=>!isBlankRow(data[i]));
+  if(!rows.length){ toast('対象行がありません','ng'); return; }
+  if(!confirm(`全 ${rows.length} 行の「${COL_LABEL[prop]}」を「${val}」に設定します。よろしいですか？`)) return;
+  let n=0; rows.forEach(i=>{ if(!cellNA(i,prop)){ data[i][prop]=val; n++; } });
+  refresh(true); toast(`${COL_LABEL[prop]} を ${n} 行に一括設定しました`,'ok');
+}
+function applyChanges(){
+  refresh(true);
+  // エラーのない行だけ登録し、エラー行はそのまま残してエラー表示を続ける（部分反映）
+  let added=0, updated=0, errRows=0;
+  data.forEach((r,i)=>{
+    if(isBlankRow(r)) return;
+    if(cellErrors[i] && Object.keys(cellErrors[i]).length){ errRows++; return; } // エラー行は登録せず残す
+    if(!r._id){ newRowSeq++; r._id='new'+String(newRowSeq).padStart(3,'0'); added++; }
+    else if(rowChanged(r)){ updated++; }
+    ORIGINAL[r._id]={}; FIELDS.forEach(k=>ORIGINAL[r._id][k]=String(r[k])); // 登録成功→ベースライン更新（既存化）
+  });
+  data=data.filter(r=>!isBlankRow(r)); refresh(true);
+  if(errRows>0){
+    toast(`反映：新規 ${added} 件 / 更新 ${updated} 件。エラー ${errRows} 件は未反映（修正後に再度「反映」）`, (added+updated)>0?'ok':'ng');
+  } else {
+    toast(`反映しました（新規 ${added} 件 / 更新 ${updated} 件）`,'ok');
+  }
+}
+function resetAll(){ if(!confirm('編集内容を破棄して初期状態に戻しますか？'))return; data=buildInitialData(); snapshotOriginal(data); focusedRow=null; refresh(true); toast('初期状態に戻しました'); }
+
+addRowBtn.onclick=addRow; dupRowBtn.onclick=dupRows; delRowBtn.onclick=delRows;
+bulkApplyBtn.onclick=bulkApply; applyBtn.onclick=applyChanges; resetBtn.onclick=resetAll;
+
+/* ============================================================
+   起動
+   ============================================================ */
+data=buildInitialData(); snapshotOriginal(data); refresh(true);
+</script>
+</body>
+</html>
