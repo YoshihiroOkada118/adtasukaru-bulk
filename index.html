@@ -4,72 +4,41 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>プログラム情報 一括登録・編集 UI モック｜アドタスカル</title>
+<title>アドタスカル モック一覧</title>
 <style>
   body{ margin:0; background:#f4f6f9; color:#1a202c; font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif; line-height:1.7; }
-  .wrap{ max-width:860px; margin:0 auto; padding:40px 22px 80px; }
-  h1{ font-size:22px; margin:0 0 6px; }
-  .sub{ color:#718096; font-size:13px; margin-bottom:28px; }
-  .card{ background:#fff; border:1px solid #d8dee6; border-radius:12px; padding:22px 24px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
-  .card h2{ font-size:17px; margin:0 0 4px; }
-  .badge{ font-size:11px; border-radius:5px; padding:2px 8px; vertical-align:middle; margin-left:6px; }
-  .b-free{ background:#e6f4ec; color:#2f855a; border:1px solid #b7e0c6; }
-  .b-lib{ background:#e7f0fa; color:#2b6cb0; border:1px solid #b8d4ef; }
-  .card p{ font-size:13.5px; color:#3a4656; margin:8px 0 16px; }
-  .card ul{ font-size:13px; color:#4a5568; margin:0 0 16px; padding-left:20px; }
-  a.btn{ display:inline-block; background:#2b6cb0; color:#fff; text-decoration:none; font-weight:bold; font-size:14px; padding:10px 22px; border-radius:8px; transition:.12s; }
-  a.btn:hover{ background:#234e84; }
-  .meta{ font-size:12px; color:#718096; margin-top:10px; }
-  .intro{ background:#fff; border:1px solid #d8dee6; border-left:4px solid #2b6cb0; border-radius:8px; padding:14px 18px; margin-bottom:24px; font-size:13.5px; }
-  .intro b{ color:#234e84; }
-  kbd{ background:#2d3748; color:#fff; border-radius:4px; padding:1px 6px; font-size:11px; }
+  .wrap{ max-width:820px; margin:0 auto; padding:46px 22px 80px; }
+  h1{ font-size:24px; margin:0 0 4px; }
+  .sub{ color:#718096; font-size:13px; margin-bottom:30px; }
+  .tool{ display:block; text-decoration:none; color:inherit; background:#fff; border:1px solid #d8dee6; border-radius:12px; padding:20px 24px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,.04); transition:.12s; }
+  .tool:hover{ border-color:#2b6cb0; box-shadow:0 4px 14px rgba(43,108,176,.12); transform:translateY(-1px); }
+  .tool h2{ font-size:18px; margin:0 0 4px; color:#234e84; }
+  .tool p{ font-size:13.5px; color:#4a5568; margin:6px 0 0; }
+  .tool .go{ color:#2b6cb0; font-weight:bold; font-size:13px; margin-top:10px; display:inline-block; }
+  .soon{ background:#fafbfd; border-style:dashed; color:#a0aab5; cursor:default; }
+  .soon:hover{ border-color:#d8dee6; box-shadow:0 1px 3px rgba(0,0,0,.04); transform:none; }
+  .soon h2{ color:#a0aab5; }
   .note{ font-size:11.5px; color:#94a0ae; margin-top:30px; border-top:1px dashed #d8dee6; padding-top:14px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>プログラム情報 一括登録・編集 UI（モック）</h1>
-  <div class="sub">アドタスカル ／ 複数オフラインコンバージョンの一括登録・一括編集 スプレッドシート型UI 検討用</div>
+  <h1>アドタスカル モック一覧</h1>
+  <div class="sub">新機能・UI検討用のモック置き場です（操作イメージ確認用 / 実データ更新なし）。</div>
 
-  <div class="intro">
-    <b>背景</b>：1案件に複数のオフラインCVを登録するため、20〜30件まとめて登録・編集したいという要望が増えています。承認率や報酬額の変更時に1件ずつ編集するのが大きな手間のため、スプレッドシート型UIで一括編集できる仕組みを検討しています。<br><br>
-    <b>共通機能</b>：コピー＆ペースト（Excel/スプレッドシートから貼り付け可）／オートフィル（ドラッグ）／一括設定／その場でバリデーション（重複もリアルタイム検知）／反映ボタン（エラーのない行だけ登録・部分反映）。新規登録と編集の両対応。
-  </div>
+  <a class="tool" href="./program-bulk-editor/">
+    <h2>プログラム情報 一括登録・編集 UI</h2>
+    <p>1案件に複数のオフラインCVを登録するため、20〜30件をまとめて登録・編集するスプレッドシート型UI。コピペ・オートフィル・一括設定・その場バリデーション・部分反映に対応。バニラ版とRevoGrid版の2案。</p>
+    <span class="go">開く →</span>
+  </a>
 
-  <div class="card">
-    <h2>① バニラJS版<span class="badge b-free">依存ゼロ・オフライン可</span></h2>
-    <p>外部ライブラリを一切使わない自前実装版。依存・ライセンス不要で、将来 Vue へ移植しやすい構成です。</p>
-    <ul>
-      <li>コピペ／オートフィル／範囲選択をすべて自前実装</li>
-      <li>ASPは常時プルダウン、ダブルクリックでセル編集</li>
-    </ul>
-    <a class="btn" href="./vanilla.html">バニラ版を開く →</a>
-  </div>
-
-  <div class="card">
-    <h2>② RevoGrid版<span class="badge b-lib">MIT・無料ライブラリ</span></h2>
-    <p>MITライセンスの無料グリッドライブラリ RevoGrid を使った版。コピペ・オートフィル・範囲選択はライブラリ標準機能です（初回読み込みにネット接続が必要）。</p>
-    <ul>
-      <li>範囲選択・オートフィル・クリップボードがライブラリ標準</li>
-      <li>ASPは常時プルダウン、セルはネイティブ編集</li>
-    </ul>
-    <a class="btn" href="./revogrid.html">RevoGrid版を開く →</a>
-  </div>
-
-  <div class="card" style="background:#fafbfd;">
-    <h2 style="font-size:15px;">エンジニア向けメモ</h2>
-    <ul style="margin-bottom:0;">
-      <li>題材は <b>Google CV（1ツール・1アカウント）</b>。入力項目は広告媒体とASPで変わるため、グリッドはツール×アカウント単位の想定。</li>
-      <li>ユニーク制約：プログラム名＝アカウント単位／ASPプログラム名・プログラムID＝アカウント＋ASP単位。</li>
-      <li>ASPによる出し分け：報酬額（Felmat等はASP自動で対象外）、ASPプログラム名（使わないASPは対象外）をセル単位で制御。</li>
-      <li>TikTok/LINE/YDA の「ピクセル/タグ複数選択」は1セル1値のスプレッドシートと相性が悪く、本モックでは対象外（要追加検討）。</li>
-      <li>「反映」は保存をシミュレート（実データ更新なし）。エラー行は登録せず残し、エラー表示を継続。</li>
-    </ul>
+  <div class="tool soon">
+    <h2>（別ツールのモック）</h2>
+    <p>今後ここに追加予定。</p>
   </div>
 
   <div class="note">
-    ※ 操作イメージ確認用のモックです。実データへの保存は行いません。ダミーデータ・UIのみで機密情報は含みません。<br>
-    ※ 操作：クリックで選択／ドラッグ or <kbd>Shift</kbd>+クリックで範囲選択／ダブルクリックでセル編集／セル右下の■ドラッグでオートフィル。
+    ※ いずれも操作イメージ確認用のモックです。ダミーデータ・UIのみで、実データへの保存・機密情報は含みません。
   </div>
 </div>
 </body>
