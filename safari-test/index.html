@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>アドタスカル Safariプライベート テスト</title>
+<script>
+  // タグより先に、このページに直接書いたスクリプト（第一者）から見えるURLを記録する
+  window.urlSeenByInlineScript = location.href;
+</script>
+<!-- アドタスカル LPタグ v2.3 --><script>let adtasukaruSafetyTagExistsS;(function(){const adtasukaruToolList=[{id:'7',clickId:'gclid',browserIdNameToSearch:null,cookieValueNameToSearch:null,},{id:'7',clickId:'wbraid',browserIdNameToSearch:null,cookieValueNameToSearch:null,},{id:'7',clickId:'gbraid',browserIdNameToSearch:null,cookieValueNameToSearch:null,},{id:'10',clickId:'yclid',browserIdNameToSearch:null,cookieValueNameToSearch:null,},{id:'11',clickId:'ttclid',browserIdNameToSearch:null,cookieValueNameToSearch:null,},{id:'12',clickId:'msclkid',browserIdNameToSearch:null,cookieValueNameToSearch:null,},{id:'14',clickId:'ldtag_cl',browserIdNameToSearch:'__lt__cid',cookieValueNameToSearch:null,},{id:'15',clickId:'yclid',browserIdNameToSearch:null,cookieValueNameToSearch:'_yjr_yjad',}];let toolData=undefined;for(const adtasukaruToolData of adtasukaruToolList){if(location.href.indexOf(`${adtasukaruToolData.clickId}=`)!==-1){if(adtasukaruToolData.id==='10'){if(location.href.indexOf(`yj_r=`)===-1){toolData=adtasukaruToolData;break}else{continue}}else if(adtasukaruToolData.id==='15'){if(location.href.indexOf(`yj_r=`)!==-1){toolData=adtasukaruToolData;break}else{continue}}else{toolData=adtasukaruToolData;break}}else{continue}} if(toolData!==undefined){let existenceCheckParameter='&spAT=assigned';if(location.href.indexOf(existenceCheckParameter)===-1){let squadbeyondUid = undefined;if (window.sb_tu_id !== undefined) {squadbeyondUid = window.sb_tu_id} else {const squadbeyondVisitorId = document.querySelector('.js-v-id')?.dataset.value;if (squadbeyondVisitorId) {squadbeyondUid = squadbeyondVisitorId}}let squadbeyondSafetyParameter = undefined;if (squadbeyondUid !== undefined) {squadbeyondSafetyParameter = `&sbidAT=${squadbeyondUid}`} let browserIdSafetyParameter='&bIdAT=empty';let cookieValueSafetyParameter='&ckAT=empty';const cookieStringList=document.cookie.split(';');for(const cookieString of cookieStringList){const cookieDataList=cookieString.split('=');const cookieName=cookieDataList[0].trim();if(cookieName===toolData.cookieValueNameToSearch){browserIdSafetyParameter=`&bIdAT=${cookieDataList[1].trim()}`}else if(cookieName===toolData.browserIdNameToSearch){cookieValueSafetyParameter=`&ckAT=${cookieDataList[1].trim()}`}else{console.log('no action.')}} let newArticleUrl=location.href;let hashTag = '';if (newArticleUrl.includes('#') === true) {newArticleUrl = location.href.slice(0, location.href.indexOf('#'));hashTag = location.href.slice(location.href.indexOf('#'));}switch(toolData.id){case '7':case '10':case '12':if(squadbeyondSafetyParameter!==undefined){newArticleUrl=newArticleUrl+squadbeyondSafetyParameter}else{console.log('as it is.')} break;case '11':if(squadbeyondSafetyParameter!==undefined){if (newArticleUrl.indexOf('?ttclid=') !== -1) {squadbeyondSafetyParameter = squadbeyondSafetyParameter.replace('&', '');const bIdATIndex = newArticleUrl.indexOf('ttclid=');newArticleUrl = newArticleUrl.slice(0, bIdATIndex) + squadbeyondSafetyParameter + '&' +newArticleUrl.slice(bIdATIndex);} else {const bIdATIndex = newArticleUrl.indexOf('&ttclid=');newArticleUrl = newArticleUrl.slice(0, bIdATIndex) + squadbeyondSafetyParameter + newArticleUrl.slice(bIdATIndex);}}else{console.log('as it is.')} break;case '14':newArticleUrl=newArticleUrl+browserIdSafetyParameter;if(squadbeyondSafetyParameter!==undefined){newArticleUrl=newArticleUrl+squadbeyondSafetyParameter}else{console.log('as it is.')} break;case '15':const yclidIndex=newArticleUrl.indexOf('&yj_r=');newArticleUrl=newArticleUrl.slice(0,yclidIndex)+cookieValueSafetyParameter+newArticleUrl.slice(yclidIndex);if(squadbeyondSafetyParameter!==undefined){const yjrIndex=newArticleUrl.indexOf('&ckAT=');newArticleUrl=newArticleUrl.slice(0,yjrIndex)+squadbeyondSafetyParameter+newArticleUrl.slice(yjrIndex)}else{console.log('as it is.')} break;default:break} history.replaceState(null,null,newArticleUrl+existenceCheckParameter+hashTag)}else{console.log('Adtasukaru safety parameters already assigned.')}}else{console.log('No CLICK ID in URL.')}}());let adtasukaruSafetyTagExistsE;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+<script>
+    var headByAdtasukaru = document.getElementsByTagName('head');
+    var metaByAdtasukaru = document.createElement('meta');
+    metaByAdtasukaru.name = 'referrer';
+    metaByAdtasukaru.content = 'no-referrer-when-downgrade';
+    headByAdtasukaru[0].appendChild(metaByAdtasukaru);
+</script>
+<script src="https://adtasukaru.com/api/tools02/add-parameter-to-target-links.php?user_id=3&ver=v2.3&dcl=true" defer></script>
+<!-- アドタスカル LPタグ v2.3 -->
+<style>
+  body { font-family: sans-serif; margin: 16px; line-height: 1.5; }
+  h1 { font-size: 18px; }
+  .box { background: #f5f5f5; border: 1px solid #ccc; padding: 8px; margin: 10px 0; word-break: break-all; font-size: 13px; }
+  .label { font-weight: bold; font-size: 13px; color: #333; }
+  #verdict { font-size: 20px; font-weight: bold; padding: 12px; text-align: center; border-radius: 6px; }
+  .ok { background: #d8f5d8; color: #116611; }
+  .ng { background: #fde0e0; color: #aa1111; }
+  .wait { background: #eee; color: #555; }
+  a.affiliate { display: inline-block; background: #e60033; color: #fff; padding: 12px 20px; border-radius: 6px; text-decoration: none; }
+</style>
+</head>
+<body>
+<h1>アドタスカル Safariプライベート テスト</h1>
+
+<div id="verdict" class="wait">判定中...（3秒ほどお待ちください）</div>
+
+<div class="box"><div class="label">(1) アドレスバーのURLに gclid= が残っているか</div><div id="gclid-status">-</div></div>
+<div class="box"><div class="label">(2) ページに直接書いたスクリプトから見えるURL</div><div id="inline-url">-</div></div>
+<div class="box"><div class="label">(3) 「#」リンクから組み立てたURL</div><div id="hash-url">-</div></div>
+<div class="box"><div class="label">(4) アドタスカルのタグが付けた後のアフィリリンク</div><div id="link-href">-</div></div>
+<div class="box"><div class="label">(5) ブラウザ</div><div id="ua">-</div></div>
+
+<p><a id="hash-link" href="#">（判定用の「#」リンク。押さなくてよい）</a></p>
+<p>↓アフィリエイトリンク（判定には押さなくてよい）</p>
+<a id="aff-link" class="affiliate" href="https://ad-fam.com/ad/p/r?_site=23813&_article=5594">公式サイトはこちら</a>
+
+<script>
+  function render() {
+    var inlineUrl = window.urlSeenByInlineScript || '';
+    var hashUrl = document.getElementById('hash-link').href;
+    var linkHref = document.getElementById('aff-link').href;
+    document.getElementById('gclid-status').textContent = (hashUrl.indexOf('gclid=TEST1') !== -1) ? '残っている（通常のブラウズ相当）' : '消えている（リンクトラッキング保護が働いている）';
+    document.getElementById('inline-url').textContent = inlineUrl;
+    document.getElementById('hash-url').textContent = hashUrl;
+    document.getElementById('link-href').textContent = linkHref;
+    document.getElementById('ua').textContent = navigator.userAgent;
+    return linkHref;
+  }
+  render();
+  setTimeout(function () {
+    var linkHref = render();
+    var verdict = document.getElementById('verdict');
+    if (linkHref.indexOf('TEST1') !== -1) {
+      verdict.textContent = 'OK：アフィリリンクにパラメータが付いた';
+      verdict.className = 'ok';
+    } else {
+      verdict.textContent = 'NG：アフィリリンクにパラメータが付いていない';
+      verdict.className = 'ng';
+    }
+  }, 3000);
+  setInterval(render, 1000);
+</script>
+</body>
+</html>
